@@ -1,0 +1,109 @@
+//first paste this two commands in termux 
+//mkdir templates
+//nano templates/index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin:0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg,#141e30,#243b55);
+            color:white;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+        .container {
+            width:90%;
+            max-width:500px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            padding:25px;
+            border-radius:20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        h2 { text-align:center; }
+        textarea {
+            width:100%;
+            box-sizing:border-box;
+            border:none;
+            border-radius:12px;
+            padding:12px;
+            font-size:16px;
+            resize:none;
+            background:rgba(255,255,255,0.15);
+            color:white;
+        }
+        button {
+            width:100%;
+            padding:12px;
+            margin-top:10px;
+            border:none;
+            border-radius:12px;
+            font-size:16px;
+            background:#00c6ff;
+            color:black;
+            font-weight:bold;
+            cursor:pointer;
+        }
+        button:hover { background:#00f2fe; }
+        .response {
+            margin-top:20px;
+            padding:15px;
+            border-radius:12px;
+            background:rgba(255,255,255,0.1);
+        }
+        .mic {
+            background:#ff4e50;
+            color:white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>AI Voice Assistant</h2>
+    <form method="POST">
+        <textarea id="prompt" name="prompt" rows="4" placeholder="Speak or type..." required></textarea>
+        <button type="button" class="mic" onclick="startListening()">🎤 Speak</button>
+        <button type="submit">Generate</button>
+    </form>
+    {% if response_text %}
+    <div class="response">
+        <strong>Response:</strong>
+        <p id="aiText">{{ response_text }}</p>
+        <button onclick="speakText()">🔊 Speak</button>
+    </div>
+    {% endif %}
+</div>
+<script>
+function speakText() {
+    const text = document.getElementById("aiText").innerText;
+    const utterance = new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(utterance);
+}
+function startListening() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("Speech Recognition not supported in this browser.");
+        return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.start();
+    recognition.onresult = function(event) {
+        document.getElementById("prompt").value = event.results[0][0].transcript;
+    };
+    recognition.onerror = function(event) {
+        alert("Error occurred in recognition: " + event.error);
+    };
+}
+</script>
+</body>
+</html>
+
+//then press Ctrl+x then y then press enter
